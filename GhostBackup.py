@@ -22,7 +22,6 @@ def check_dir():
         if os.path.isfile("savegamedir.txt"):
             with open("savegamedir.txt", 'r') as f:
                 path = f.readlines()[0]
-                print(path)
         else:
             with open("savegamedir.txt", 'w+') as f:
                 print("Select your GRW save game directory")
