@@ -1,0 +1,17 @@
+pip~=23.2.1
+Jinja2~=3.1.4
+PyYAML~=6.0.1
+MarkupSafe~=2.1.5
+tomlkit~=0.13.0
+wcwidth~=0.2.13
+termcolor~=2.4.0
+commitizen~=3.27.0
+importlib_metadata~=7.2.1
+argcomplete~=3.3.0
+decli~=0.6.2
+questionary~=2.0.1
+colorama~=0.4.6
+packaging~=24.1
+setuptools~=65.5.0
+zipp~=3.19.2
+python-dotenv~=1.0.1
