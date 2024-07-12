@@ -73,12 +73,10 @@ def backup() -> None:
             old_path = os.path.join(save_path, save)
             new_path = os.path.join(save_path, new_name)
             os.rename(old_path, new_path)
-            # print(f"Renamed: {old_path} to {new_path}")
             new_save_index += 1
 
         saves = os.listdir(save_path)
         saves = sorted(saves, key=lambda x: (extract_number(x), x))
-        # print(saves)
         target_backup_name = saves[-1]
 
         target_file = f'{save_path}/{target_backup_name}'
@@ -89,17 +87,13 @@ def backup() -> None:
 
         target_file = f'{save_path}/{saves[0]}'
         target_rename = f'{save_path}/{target_backup_name.replace(f"-{len(saves)}", "-latest")}'
-        # print(saves[0], target_file, target_rename)
         shutil.copytree(target_file, target_rename)
-
-        # print(os.listdir(save_path))
 
         save_interval = os.environ.get('save_interval')
         if not save_interval:
             time.sleep(900)
             continue
-        # time.sleep(float(save_interval))
-        time.sleep(2)
+        time.sleep(float(save_interval))
 
 def restore(restore_type=None) -> None:
     save_path = os.environ['save_game_dir']
@@ -117,10 +111,10 @@ def restore(restore_type=None) -> None:
 
 
 def interface():
-    print('Available commands.')
-    print('p     reset save path')
-    print('r     restore latest save')
     while True:
+        print('Available commands.')
+        print('p     reset save path')
+        print('r     restore latest save')
         try:
             option = input().lower()
             match option:
