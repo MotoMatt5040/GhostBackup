@@ -5,10 +5,9 @@ import os
 import threading
 import time
 import shutil
-import msvcrt
-import tkinter as tk
 from tkinter import filedialog
 import re
+import sys
 
 threads = []
 
@@ -35,15 +34,16 @@ def reset() -> None:
 
 
 def backup() -> None:
-    def extract_number(filename):
-        if filename == 'Save':
-            return -float('inf')
-        match = re.search(r'(\d+)', filename)
-        return int(match.group(0)) if match else float('inf')
 
     save_path = os.environ.get('save_game_dir')
     allowed_saves_count = os.environ.get('allowed_saves_count')
     saves = os.listdir(save_path)
+
+    def extract_number(filename):
+        if filename == saves[0]:
+            return -float('inf')
+        match = re.search(r'(\d+)', filename)
+        return int(match.group(0)) if match else float('inf')
 
     if len(saves) == 1:
         original_save = os.path.join(save_path, saves[0])
@@ -65,10 +65,11 @@ def backup() -> None:
         remaining_saves = sorted(remaining_saves, key=lambda x: (extract_number(x), x))
 
         new_save_index = 2
+        # print(remaining_saves)
         for save in remaining_saves:
-            if save == 'Save' or save == 'Save-latest':
+            if save == saves[0] or save == f'{saves[0]}-latest':
                 continue
-            new_name = f'Save-{new_save_index}'
+            new_name = f'{saves[0]}-{new_save_index}'
             old_path = os.path.join(save_path, save)
             new_path = os.path.join(save_path, new_name)
             os.rename(old_path, new_path)
@@ -87,15 +88,18 @@ def backup() -> None:
         target_backup_name = target_backup_name.replace('-latest', f'-{len(saves)}')
 
         target_file = f'{save_path}/{saves[0]}'
-        target_rename = f'{save_path}/{target_backup_name.replace(f"{len(saves)}", "latest")}'
+        target_rename = f'{save_path}/{target_backup_name.replace(f"-{len(saves)}", "-latest")}'
+        # print(saves[0], target_file, target_rename)
         shutil.copytree(target_file, target_rename)
+
+        # print(os.listdir(save_path))
 
         save_interval = os.environ.get('save_interval')
         if not save_interval:
             time.sleep(900)
             continue
-        time.sleep(float(save_interval))
-
+        # time.sleep(float(save_interval))
+        time.sleep(2)
 
 def restore(restore_type=None) -> None:
     save_path = os.environ['save_game_dir']
@@ -122,9 +126,9 @@ def interface():
             match option:
                 case 'p':
                     reset()
-                    quit()
+                    sys.exit()
                 case 'r':
-                    restore_type = input("Press enter for latest, or type 'select' to select a specific backup:\n\n")
+                    restore_type = input("Press enter for latest, or type [s] to select a specific backup: [enter]/[s]\n\n")
                     restore(restore_type)
                 case _:
                     print('Invalid option.')
@@ -136,7 +140,7 @@ def interface():
 
 if not os.environ.get('save_game_dir'):
     reset()
-    quit()
+    sys.exit()
 
 if __name__ == "__main__":
     threads.append(threading.Thread(target=backup))
