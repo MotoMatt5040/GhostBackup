@@ -69,7 +69,11 @@ def backup() -> None:
         target_rename = f'{save_path}/{target_backup.replace(f"{len(saves)}", "latest")}'
         shutil.copytree(target_file, target_rename)
 
-        time.sleep(5)
+        save_interval = float(os.environ.get('save_interval'))
+        if not save_interval:
+            time.sleep(900)
+            continue
+        time.sleep(save_interval)
 
 
 def restore(restore_type=None) -> None:
