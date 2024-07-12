@@ -5,7 +5,7 @@ The program is a python script, which can either backup or restore your save.
 This is especially useful with the Ghost mode, as the game is full of bugs which can get you killed easily and hence remove your save.
 
 The backups are located in your Ubisoft savegame directory (by default `C:/Program Files (x86)/Ubisoft/Ubisoft Game Launcher/savegames/<Uplay user ID>`)
-and up to five backups are kept allowing you to restore a previous game state if, for example, you have created a backup while downed and the game has declared you dead prematurely.
+and the amount of backups you allow are kept for you to restore a previous game state if, for example, you have created a backup while downed and the game has declared you dead prematurely.
 
 The GRW savefiles are in folder `3559` by default and this script creates as many backups as you specify. In other words, after reaching your backup limit you should have the following directory structure in your savegame folder:
 
