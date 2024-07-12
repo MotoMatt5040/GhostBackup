@@ -143,4 +143,7 @@ if __name__ == "__main__":
     threads.append(threading.Thread(target=interface))
 
     for thread in threads:
+        thread.daemon = True
         thread.start()
+    while True:
+        pass
