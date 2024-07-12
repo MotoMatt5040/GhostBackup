@@ -36,7 +36,7 @@ version 3.11.5
 6. Enter [p] if you would like to reset your environment variables for the program. Please note any bugs in the issues tab.
 
 ## Instructions for .exe
-1. Download the exe file
+1. Download the exe file in the dist folder
 2. Run the script by double-clicking
 3. Run the initial setup sequence. This will require you to close and reopen the script.
 4. Open the program to auto backup at your set timed interval.
