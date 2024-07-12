@@ -1,5 +1,4 @@
 from dotenv import load_dotenv, set_key
-
 load_dotenv()
 
 import os
@@ -9,17 +8,17 @@ import shutil
 import msvcrt
 import tkinter as tk
 from tkinter import filedialog
+import re
 
 threads = []
 
 
 def reset() -> None:
-    print('Running initial setup script:\n\nPlease select your save game directory.\n    --NOTE: This is the folder '
-          'containing your save folders, not your single instance save folder.')
+    print('Running initial setup script:\n\nPlease select your save game directory.\n    --NOTE: This is the folder containing your save folders, not your single instance save folder.')
     save_path = filedialog.askdirectory()
     set_key('.env', 'save_game_dir', save_path)
 
-    allowed_saves_count = input('Please enter the amount of backup files you would like to be saved: ')
+    allowed_saves_count = input('Please enter the amount of backup files you would like to be saved.')
     set_key('.env', 'allowed_saves_count', allowed_saves_count)
 
     save_interval = input('Please enter the amount of time between backups in minutes: ')
@@ -29,22 +28,48 @@ def reset() -> None:
 
 
 def backup() -> None:
+    def extract_number(filename):
+        if filename == 'Save':
+            return -float('inf')
+        match = re.search(r'(\d+)', filename)
+        return int(match.group(0)) if match else float('inf')
+
+    save_path = os.environ.get('save_game_dir')
+    allowed_saves_count = os.environ.get('allowed_saves_count')
+    saves = os.listdir(save_path)
+
+    if len(saves) == 1:
+        original_save = os.path.join(save_path, saves[0])
+        backup_save = os.path.join(save_path, f'{saves[0]}-2')
+        shutil.copytree(original_save, backup_save)
+
     while True:
-        save_path = os.environ.get('save_game_dir')
-        save_interval = os.environ.get('save_interval')
         saves = os.listdir(save_path)
+        saves = sorted(saves, key=lambda x: (extract_number(x), x))
 
-        if len(saves) > int(os.environ['allowed_saves_count']):
-            os.mkdir(os.path.join(save_path, 'temp'))
-            shutil.copytree(f'{save_path}/{saves[0]}', f'{os.path.dirname(save_path)}/temp/{saves[0]}')
-            # save_path = f"{os.path.dirname(save_path)}/temp"
+        if len(saves) > int(allowed_saves_count):
+            shutil.rmtree(os.path.join(save_path, saves[1]))
+            for i in range(1, int(allowed_saves_count)):
+                file_to_change = os.path.join(save_path, saves[i + 1])
+                name_to_change_to = os.path.join(save_path, saves[i])
+                os.rename(file_to_change, name_to_change_to)
 
+        saves = os.listdir(save_path)
+        saves = sorted(saves, key=lambda x: (extract_number(x), x))
+        print(saves)
         target_backup = saves[-1]
-        os.rename(f'{save_path}/{target_backup}', f"{save_path}/{target_backup.replace('-latest', f'-{len(saves)}')}")
+
+        target_file = f'{save_path}/{target_backup}'
+        target_rename = f"{save_path}/{target_backup.replace('-latest', f'-{len(saves)}')}"
+        os.rename(target_file, target_rename)
+
         target_backup = target_backup.replace('-latest', f'-{len(saves)}')
-        shutil.copytree(f'{save_path}/{target_backup}',
-                        f'{save_path}/{target_backup.replace(f"{len(saves)}", "latest")}')
-        time.sleep(float(save_interval))
+
+        target_file = f'{save_path}/{target_backup}'
+        target_rename = f'{save_path}/{target_backup.replace(f"{len(saves)}", "latest")}'
+        shutil.copytree(target_file, target_rename)
+
+        time.sleep(5)
 
 
 def restore(restore_type=None) -> None:
