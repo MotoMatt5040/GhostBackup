@@ -122,7 +122,7 @@ def interface():
             match option:
                 case 'p':
                     reset()
-                    exit()
+                    quit()
                 case 'r':
                     restore_type = input("Press enter for latest, or type 'select' to select a specific backup:\n\n")
                     restore(restore_type)
@@ -136,7 +136,7 @@ def interface():
 
 if not os.environ.get('save_game_dir'):
     reset()
-    exit()
+    quit()
 
 if __name__ == "__main__":
     threads.append(threading.Thread(target=backup))
