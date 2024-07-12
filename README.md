@@ -7,7 +7,7 @@ This is especially useful with the Ghost mode, as the game is full of bugs which
 The backups are located in your Ubisoft savegame directory (by default `C:/Program Files (x86)/Ubisoft/Ubisoft Game Launcher/savegames/<Uplay user ID>`)
 and up to five backups are kept allowing you to restore a previous game state if, for example, you have created a backup while downed and the game has declared you dead prematurely.
 
-The GRW savefiles are in folder `3559` and this script creates up to five backups. In other words, after five backups you should have the following directory structure in your savegame folder:
+The GRW savefiles are in folder `3559` by default and this script creates as many backups as you specify. In other words, after reaching your backup limit you should have the following directory structure in your savegame folder:
 
 ```
 C:
@@ -17,23 +17,34 @@ C:
             └── savegames
                 └── <Uplay user ID>
                     ├── 3559
-                    ├── 3559 - backup 1
-                    ├── 3559 - backup 2
-                    ├── 3559 - backup 3
-                    ├── 3559 - backup 4
-                    └── 3559 - backup 5
+                    ├── 3559-1
+                    ├── 3559-2
+                    ├── 3559-3
+                    ├── 3559-4
+                    ├── 3559-5
+                    └── 3559-latest
+                    
 ```
 
-## Instructions
-
+## Instructions for python
+version 3.11.5
 1. Download the python script
 2. Run the script by double-clicking it or via command line `python GhostBackup.py`
-3. Press B to backup your save or R to restore it
-4. Press Y to confirm
-5. If restoring save, select a save number by typing the number (1-5) 
+3. Run the initial setup sequence. This will require you to close and reopen the script.
+4. Open the program to auto backup at your set timed interval.
+5. If restoring save, enter [r]. If you would like to backup from latest just press [enter] otherwise enter [s] to select the restore file.
+6. Enter [p] if you would like to reset your environment variables for the program. Please note any bugs in the issues tab.
+
+## Instructions for .exe
+1. Download the exe file
+2. Run the script by double-clicking
+3. Run the initial setup sequence. This will require you to close and reopen the script.
+4. Open the program to auto backup at your set timed interval.
+5. If restoring save, enter [r]. If you would like to backup from latest just press [enter] otherwise enter [s] to select the restore file.
+6. Enter [p] if you would like to reset your environment variables for the program. Please note any bugs in the issues tab.
 
 ### Disclaimer
 
-This script has only been tested on Windows 10 and its functionality is not guaranteed for other operating systems.
+This script has only been tested on Windows 10/11 and its functionality is not guaranteed for other operating systems.
 
 I am not liable for any damage or lost savegames, but please do message me if you have any issues.
