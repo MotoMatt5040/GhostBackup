@@ -33,7 +33,7 @@ def reset() -> None:
     input('Setup complete, please close and run script again to save state.')
 
 
-def backup() -> None:
+def backup(force=False) -> None:
 
     save_path = os.environ.get('save_game_dir')
     allowed_saves_count = os.environ.get('allowed_saves_count')
@@ -89,11 +89,16 @@ def backup() -> None:
         target_rename = f'{save_path}/{target_backup_name.replace(f"-{len(saves)}", "-latest")}'
         shutil.copytree(target_file, target_rename)
 
+        if force:
+            print(f'Forced backup complete.')
+            return
+
         save_interval = os.environ.get('save_interval')
         if not save_interval:
             time.sleep(900)
             continue
         time.sleep(float(save_interval))
+
 
 def restore(restore_type=None) -> None:
     save_path = os.environ['save_game_dir']
@@ -115,6 +120,7 @@ def interface():
         print('Available commands.')
         print('p     reset save path')
         print('r     restore latest save')
+        print('b     force backup')
         try:
             option = input().lower()
             match option:
@@ -124,6 +130,8 @@ def interface():
                 case 'r':
                     restore_type = input("Press enter for latest, or type [s] to select a specific backup: [enter]/[s]\n\n")
                     restore(restore_type)
+                case 'b':
+                    backup(True)
                 case _:
                     print('Invalid option.')
         except:
