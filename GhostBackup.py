@@ -1,6 +1,4 @@
 from dotenv import load_dotenv, set_key
-load_dotenv()
-
 import os
 import threading
 import time
@@ -9,32 +7,46 @@ from tkinter import filedialog
 import re
 import sys
 
+load_dotenv(os.path.join(os.getcwd(), '.env'))
+
 threads = []
 
 
 def reset() -> None:
-    print('Running initial setup script:\n\nPlease select your save game directory.\n    --NOTE: This is the folder containing your save folders, not your single instance save folder.')
+    print(
+        'Running initial setup script:\n\nPlease select your save game directory.\n    --NOTE: This is the folder '
+        'containing your save folders, not your single instance save folder.')
     save_path = filedialog.askdirectory()
     set_key('.env', 'save_game_dir', save_path)
 
-    allowed_saves_count = input('Please enter the amount of backup files you would like to be saved: ')
-    set_key('.env', 'allowed_saves_count', allowed_saves_count)
-
-    print('Please enter the amount of time between backups in minutes:\n')
+    allowed_saves_count = input(
+        'Please enter the amount of backup files you would like to be saved (> 1): ')
     while True:
         try:
-            save_interval = int(input()) * 60
+            allowed_saves_count = int(allowed_saves_count)
+            if allowed_saves_count < 2:
+                raise ValueError
             break
         except:
-            print('Please enter a valid number.')
+            allowed_saves_count = input('Please enter a valid number > 1: ')
+
+    set_key('.env', 'allowed_saves_count', str(allowed_saves_count))
+
+    while True:
+        try:
+            save_interval = int(input('Please enter the amount of time between backups in minutes (> 0): ')) * 60
+            if save_interval < 0:
+                raise ValueError
+            break
+        except:
+            print('Please enter a valid number.\n')
 
     set_key('.env', 'save_interval', str(save_interval))
 
-    input('Setup complete, please close and run script again to save state.')
+    input('Setup complete, please press enter to close the program and run the program again.')
 
 
 def backup(force=False) -> None:
-
     save_path = os.environ.get('save_game_dir')
     allowed_saves_count = os.environ.get('allowed_saves_count')
     saves = os.listdir(save_path)
@@ -57,7 +69,8 @@ def backup(force=False) -> None:
         amount_to_delete = len(saves) - int(allowed_saves_count)
 
         if amount_to_delete > 0:
-            for i in range(1, amount_to_delete + 1):  # +1 is used here so that -latest will be the finaly entry in the count
+            for i in range(1,
+                           amount_to_delete + 1):  # +1 is used here so that -latest will be the final entry in the dir
                 shutil.rmtree(os.path.join(save_path, saves[i]))
                 # print(f"Deleted: {os.path.join(save_path, saves[i])}")
 
@@ -128,7 +141,8 @@ def interface():
                     reset()
                     sys.exit()
                 case 'r':
-                    restore_type = input("Press enter for latest, or type [s] to select a specific backup: [enter]/[s]\n\n")
+                    restore_type = input(
+                        "Press enter for latest, or type [s] to select a specific backup: [enter]/[s]\n\n")
                     restore(restore_type)
                 case 'b':
                     backup(True)
